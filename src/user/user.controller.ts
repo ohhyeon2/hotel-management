@@ -1,8 +1,8 @@
 import { Controller, Post, Get, Param, Body } from '@nestjs/common';
-import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { UserService } from 'src/user/user.service';
 import { FindUserReqDto, SignupReqDto } from './dto/req.dto';
-import { SignupResDto } from './dto/res.dto';
+import { GetUserResDto, SignupResDto } from './dto/res.dto';
 
 @ApiTags('User')
 @ApiExtraModels(FindUserReqDto)
@@ -10,6 +10,7 @@ import { SignupResDto } from './dto/res.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiCreatedResponse({type: SignupResDto})
   @Post('signup')
   async create(@Body() signupReqDto: SignupReqDto): Promise<SignupResDto> {
     const { id } = await this.userService.createUser(signupReqDto);
@@ -17,7 +18,7 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param() { id }: FindUserReqDto) {
-    return this.userService.userProfile(id);
+  async getUser(@Param() { id }: FindUserReqDto): Promise<GetUserResDto> {
+    return this.userService.findOneByUserId(id);
   }
 }
