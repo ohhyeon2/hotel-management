@@ -6,11 +6,14 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import jwtConfig from './config/jwt.config';
 @Module({
   imports: [
     //TODO config module 분리하기
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
+      isGlobal: true,
+      load: [ jwtConfig ]
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
