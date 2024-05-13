@@ -41,7 +41,7 @@ export class AuthService {
     const refreshTokenEntity = await this.refreshTokenRepository.findOneBy({token})
     if (!refreshTokenEntity) throw new BadRequestException();
     const accessToken = this.jwtService.sign({sub: userId, tokenType: 'access'}, { expiresIn: '1d'})
-    const refreshToken = this.jwtService.sign({sub: userId, tokenType: 'access'}, { expiresIn: '1d'})
+    const refreshToken = this.jwtService.sign({sub: userId, tokenType: 'refresh'}, { expiresIn: '30d'})
     refreshTokenEntity.token = refreshToken;
     await this.refreshTokenRepository.save(refreshTokenEntity)
     return { accessToken, refreshToken}
