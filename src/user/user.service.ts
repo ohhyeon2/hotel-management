@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
-import { hash } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -18,6 +17,11 @@ export class UserService {
 
   async findOneByUserEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
+    return user;
+  }
+
+  async userProfile(id: string) {
+    const user = await this.userRepository.findOneBy({ id });
     return user;
   }
 }

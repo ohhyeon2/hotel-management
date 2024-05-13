@@ -20,6 +20,12 @@ export class User {
   @Column()
   name: string;
 
+  @Column({ unique: true })
+  nickname: string;
+
+  @Column({ unique: true })
+  phone: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
