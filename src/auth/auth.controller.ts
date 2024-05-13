@@ -1,8 +1,9 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninReqDto, SignupReqDto } from './dto/req.dto';
-import { SigninResDto, SignupResDto } from './dto/res.dto';
+import { RefreshTokenResDto, SigninResDto, SignupResDto } from './dto/res.dto';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { User } from 'src/user/entity/user.entity';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -13,5 +14,13 @@ export class AuthController {
   @Post('signin')
   async signin(@Body() {email, password}: SigninReqDto): Promise<SigninResDto> {
     return this.authService.signin(email, password)
+  }
+
+  @ApiCreatedResponse({type: RefreshTokenResDto})
+  @Post('refresh')
+  async refresh(@Headers('authorization') authorization, user: User) {
+    const token = /Bearer\/s(.+)/.exec(authorization)[1];
+    const { accessToken, refreshToken } = await this.authService.refresh(token, user.id)
+    return { accessToken, refreshToken }
   }
 }
