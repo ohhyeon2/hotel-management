@@ -14,18 +14,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signup(name: string, email: string, password: string) {
-    const user = await this.userService.findOneByUserEmail(email);
-    if (user) throw new BadRequestException();
-    const hashPassword = await bcrypt.hash(password, 10);
-    const createUser = await this.userService.createUserAccount(
-      name,
-      email,
-      hashPassword,
-    );
-    return createUser;
-  }
-
   async signin(email: string, password: string) {
     const user = await this.userService.findOneByUserEmail(email);
     if (!user) throw new UnauthorizedException();
