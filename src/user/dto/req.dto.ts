@@ -7,10 +7,10 @@ export class SignupReqDto {
   @MinLength(2)
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({required: true, example: '닉네임'})
   nickname: string;
 
-  @ApiProperty()
+  @ApiProperty({required: true, example: '010-1234-5678'})
   phone: string;
 
   @ApiProperty({ required: true, example: 'nestjs@naver.com' })
