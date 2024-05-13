@@ -12,12 +12,9 @@ export class UserService {
   ) {}
 
   async createUser(signupReqDto: SignupReqDto) {
-    const { name, email, password, passwordCheck, nickname, phone } =
-      signupReqDto;
-    const exUser = await this.userRepository.findOneBy({ email });
-
-    if (exUser) throw new BadRequestException();
-    if (password != passwordCheck) throw new BadRequestException();
+    const { name, email, password, passwordCheck, nickname, phone } = signupReqDto;
+    
+    await this.validateCreateUser(email, password, passwordCheck)
 
     const hashPassword = await this.generatePassword(password);
     const user = this.userRepository.create({
@@ -39,6 +36,12 @@ export class UserService {
   async userProfile(id: string) {
     const user = await this.userRepository.findOneBy({ id });
     return user;
+  }
+
+  private async validateCreateUser(email: string, password: string, passwordCheck: string) {
+    const existUser = await this.userRepository.findOneBy({ email })
+    if (existUser) throw new BadRequestException();
+    if (password != passwordCheck) throw new BadRequestException();
   }
 
   private async generatePassword(password: string) {
