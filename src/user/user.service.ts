@@ -28,20 +28,20 @@ export class UserService {
     return user;
   }
 
+  async findOneByUserId(id: string) {
+    const { email, nickname, phone } = await this.userRepository.findOneBy({ id });
+    return { email, nickname, phone };
+  }
+
   async findOneByUserEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
     return user;
   }
 
-  async userProfile(id: string) {
-    const user = await this.userRepository.findOneBy({ id });
-    return user;
-  }
-
   private async validateCreateUser(email: string, password: string, passwordCheck: string) {
     const existUser = await this.userRepository.findOneBy({ email })
-    if (existUser) throw new BadRequestException();
-    if (password != passwordCheck) throw new BadRequestException();
+    if (existUser) throw new BadRequestException("이미 존재하는 email입니다.");
+    if (password != passwordCheck) throw new BadRequestException("패스워드가 일치하지 않습니다.");
   }
 
   private async generatePassword(password: string) {
