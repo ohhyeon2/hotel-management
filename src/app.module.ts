@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import jwtConfig from './config/jwt.config';
 import emailConfig from './config/email.config';
+import { EmailModule } from './email/email.module';
 @Module({
   imports: [
     //TODO config module 분리하기
@@ -28,6 +29,7 @@ import emailConfig from './config/email.config';
     }),
     UserModule,
     AuthModule,
+    EmailModule
   ],
   controllers: [AppController],
   providers: [AppService],
