@@ -9,6 +9,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import jwtConfig from './config/jwt.config';
 import emailConfig from './config/email.config';
 import { EmailModule } from './email/email.module';
+import { RedisModule } from './redis/redis.module';
 @Module({
   imports: [
     //TODO config module 분리하기
@@ -29,7 +30,8 @@ import { EmailModule } from './email/email.module';
     }),
     UserModule,
     AuthModule,
-    EmailModule
+    EmailModule,
+    RedisModule
   ],
   controllers: [AppController],
   providers: [AppService],

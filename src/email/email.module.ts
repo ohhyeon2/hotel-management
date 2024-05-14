@@ -4,6 +4,7 @@ import { EmailController } from './email.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { CryptoService } from 'src/common/encrypt/crypto.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { CryptoService } from 'src/common/encrypt/crypto.service';
       })
     })
   ],
-  providers: [EmailService, CryptoService],
+  providers: [EmailService, CryptoService, RedisService],
   controllers: [EmailController]
 })
 export class EmailModule {}
