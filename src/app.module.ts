@@ -7,13 +7,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import jwtConfig from './config/jwt.config';
+import emailConfig from './config/email.config';
 @Module({
   imports: [
     //TODO config module 분리하기
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
-      load: [ jwtConfig ]
+      load: [ jwtConfig, emailConfig ]
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
