@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsUUID, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsUUID,
+  Matches,
+  MinLength,
+} from 'class-validator';
 
 export class SignupReqDto {
   @ApiProperty({ required: true, example: '김길동' })
@@ -7,10 +13,11 @@ export class SignupReqDto {
   @MinLength(2)
   name: string;
 
-  @ApiProperty({required: true, example: '닉네임'})
+  @ApiProperty({ required: true, example: '닉네임' })
   nickname: string;
 
-  @ApiProperty({required: true, example: '010-1234-5678'})
+  @ApiProperty({ required: true, example: '010-1234-5678' })
+  @Matches(/^\d{3}-\d{4}-\d{4}$/)
   phone: string;
 
   @ApiProperty({ required: true, example: 'nestjs@naver.com' })
@@ -18,9 +25,11 @@ export class SignupReqDto {
   email: string;
 
   @ApiProperty({ required: true, example: 'Nestjs1!' })
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{10,20}/)
   password: string;
 
   @ApiProperty({ required: true, example: 'Nestjs1!' })
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{10,20}/)
   passwordCheck: string;
 }
 
