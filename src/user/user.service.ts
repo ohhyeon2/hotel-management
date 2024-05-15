@@ -22,6 +22,7 @@ export class UserService {
       nickname,
       email,
       phone,
+      tempGrade: 'normal',
       password: hashPassword,
     });
     await this.userRepository.save(user);
