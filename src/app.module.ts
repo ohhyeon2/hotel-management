@@ -10,6 +10,7 @@ import jwtConfig from './config/jwt.config';
 import emailConfig from './config/email.config';
 import { EmailModule } from './email/email.module';
 import { RedisModule } from './redis/redis.module';
+import { GradeModule } from './grade/grade.module';
 @Module({
   imports: [
     //TODO config module 분리하기
@@ -31,7 +32,8 @@ import { RedisModule } from './redis/redis.module';
     UserModule,
     AuthModule,
     EmailModule,
-    RedisModule
+    RedisModule,
+    GradeModule
   ],
   controllers: [AppController],
   providers: [AppService],
