@@ -30,7 +30,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const { url, headers } = http.getRequest<Request>();
 
     const authorization = headers['authorization']
-    console.log(headers, url)
+  
     if (!authorization) throw new UnauthorizedException();
     if (!authorization.includes('Bearer')) throw new UnauthorizedException();
 
