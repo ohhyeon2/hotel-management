@@ -4,11 +4,14 @@ import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
+import { GradeService } from 'src/grade/grade.service';
+import { Grade } from 'src/grade/entity/grade.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User, Grade]), ScheduleModule.forRoot()],
   exports: [UserService],
   controllers: [UserController],
-  providers: [UserService, JwtService]
+  providers: [UserService, JwtService, GradeService],
 })
 export class UserModule {}

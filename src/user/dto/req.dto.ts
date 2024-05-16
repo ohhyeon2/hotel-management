@@ -25,11 +25,11 @@ export class SignupReqDto {
   email: string;
 
   @ApiProperty({ required: true, example: 'Nestjs1!' })
-  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{10,20}/)
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,20}/)
   password: string;
 
   @ApiProperty({ required: true, example: 'Nestjs1!' })
-  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{10,20}/)
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,20}/)
   passwordCheck: string;
 }
 

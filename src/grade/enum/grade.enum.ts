@@ -1,6 +1,6 @@
 export enum Grade {
-  NORMAL,
-  BRONZE,
-  SILVER,
-  GOLD
+  NORMAL = 'normal',
+  BRONZE = 'bronze',
+  SILVER = 'silver',
+  GOLD = 'gold',
 }
