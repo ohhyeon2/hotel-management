@@ -1,8 +1,8 @@
 import { Controller, Post, Get, Param, Body, UseGuards, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { UserService } from 'src/user/user.service';
-import { FindUserReqDto, SignupReqDto } from './dto/req.dto';
-import { GetUserResDto, SignupResDto } from './dto/res.dto';
+import { FindUserReqDto } from './dto/req.dto';
+import { GetUserResDto } from './dto/res.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 import { Public } from 'src/common/decorator/public.decorator';
 
@@ -11,14 +11,6 @@ import { Public } from 'src/common/decorator/public.decorator';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @ApiCreatedResponse({type: SignupResDto})
-  @Public()
-  @Post('signup')
-  async create(@Body() signupReqDto: SignupReqDto): Promise<SignupResDto> {
-    const { id } = await this.userService.createUser(signupReqDto);
-    return { id };
-  }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)

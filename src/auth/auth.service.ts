@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RefreshToken } from './entity/refresh-token.entity';
 import { Repository } from 'typeorm';
+import { SignupReqDto } from './dto/req.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,18 @@ export class AuthService {
     @InjectRepository(RefreshToken)
     private refreshTokenRepository: Repository<RefreshToken>,
   ) {}
+
+  async signup(signupReqDto: SignupReqDto) {
+    const { name, email, password, passwordCheck, nickname, phone } = signupReqDto
+
+    const existUser = await this.userService.findOneByUserEmail(email);
+    if (existUser) throw new BadRequestException();
+    if (password !== passwordCheck) throw new BadRequestException();
+
+    const hashPassword = await this.generatePassword(password);
+    const user = this.userService.create(name, email, hashPassword, nickname, phone);
+    return user;
+  }
 
   async signin(email: string, password: string) {
     const user = await this.userService.findOneByUserEmail(email);
@@ -60,5 +73,9 @@ export class AuthService {
       });
     }
     await this.refreshTokenRepository.save(refreshTokenEntity);
+  }
+
+  private async generatePassword(password: string) {
+    return bcrypt.hash(password, 10)
   }
 }
