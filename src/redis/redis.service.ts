@@ -6,8 +6,8 @@ import { Redis } from 'ioredis';
 export class RedisService {
   constructor(@InjectRedis() private readonly redis: Redis) {}
 
-  async set(key: string, value: string, ttl: number) {
-    await this.redis.set(key, value, 'EX', ttl);
+  async set(key: string, value: string) {
+    await this.redis.set(key, value, 'EX', 180);
   }
 
   async get(key: string) {

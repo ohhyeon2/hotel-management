@@ -6,7 +6,6 @@ import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/common/decorator/public.decorator';
 import { UserAfterAuth } from 'src/common/decorator/user.decorator';
 import { User } from 'src/common/decorator/user.decorator';
-import { UserService } from 'src/user/user.service';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -26,6 +25,18 @@ export class AuthController {
   @Post('signin')
   async signin(@Body() {email, password}: SigninReqDto): Promise<SigninResDto> {
     return this.authService.signin(email, password)
+  }
+
+  @Public()
+  @Post('verify-email/send')
+  async send(@Body() email: string) {
+    return this.authService.sendVerificationCode(email)
+  }
+
+  @Public()
+  @Post('verify-email/match')
+  async verify(@Body() email: string, code: string) {
+    return this.authService.matchVerificationCode(email, code)
   }
 
   @ApiCreatedResponse({type: RefreshTokenResDto})

@@ -1,4 +1,5 @@
 import { RefreshToken } from 'src/auth/entity/refresh-token.entity';
+import { Verification } from 'src/auth/entity/verification.entity';
 import { Grade } from 'src/grade/entity/grade.entity';
 import {
   Entity,
@@ -9,6 +10,7 @@ import {
   OneToOne,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -32,7 +34,7 @@ export class User {
   phone: string;
 
   @Column({ default: 0 })
-  usageCount: number = 0;
+  usageCount: number;;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -46,4 +48,7 @@ export class User {
 
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshToken: RefreshToken;
+
+  @OneToMany(() => Verification, (verification) => verification.user)
+  verified: Verification[];
 }
