@@ -51,13 +51,24 @@ export class AuthService {
   }
 
   async refresh(token: string, userId: string) {
-    const refreshTokenEntity = await this.refreshTokenRepository.findOneBy({token})
+    const refreshTokenEntity = await this.refreshTokenRepository.findOneBy({ token })
+
     if (!refreshTokenEntity) throw new BadRequestException();
-    const accessToken = this.jwtService.sign({sub: userId, tokenType: 'access'}, { expiresIn: '1d'})
-    const refreshToken = this.jwtService.sign({sub: userId, tokenType: 'refresh'}, { expiresIn: '30d'})
+
+    const accessToken = this.generateAccessToken(userId);
+    const refreshToken = this.generateRefreshToken(userId);
+    
     refreshTokenEntity.token = refreshToken;
     await this.refreshTokenRepository.save(refreshTokenEntity)
     return { accessToken, refreshToken}
+  }
+
+  private generateAccessToken(userId: string) {
+    return this.jwtService.sign({sub: userId, tokenType: 'access'}, {expiresIn: '1d'})
+  }
+
+  private generateRefreshToken(userId: string) {
+    return this.jwtService.sign({sub: userId, tokenType: 'refresh'}, {expiresIn: '30d'})
   }
 
   private async createUserRefreshToken(userId: string, refreshToken: string) {
