@@ -28,8 +28,16 @@ export class AuthService {
     if (password !== passwordCheck) throw new BadRequestException();
 
     const hashPassword = await this.generatePassword(password);
-    const user = this.userService.create(name, email, hashPassword, nickname, phone);
-    return user;
+    const user = await this.userService.create(name, email, hashPassword, nickname, phone);
+
+    const accessToken = this.generateAccessToken(user.id)
+    const refreshToken = this.refreshTokenRepository.create({
+      token: this.generateRefreshToken(user.id),
+      user: { id: user.id }
+    })
+
+    await this.refreshTokenRepository.save(refreshToken);
+    return { id: user.id, accessToken, refreshToken: refreshToken.token };
   }
 
   async signin(email: string, password: string) {

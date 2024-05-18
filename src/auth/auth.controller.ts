@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninReqDto, SignupReqDto } from './dto/req.dto';
-import { RefreshTokenResDto, SigninResDto } from './dto/res.dto';
+import { RefreshTokenResDto, SigninResDto, SignupResDto } from './dto/res.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/common/decorator/public.decorator';
 import { UserAfterAuth } from 'src/common/decorator/user.decorator';
@@ -16,9 +16,9 @@ export class AuthController {
   @ApiCreatedResponse()
   @Public()
   @Post('signup')
-  async signup(@Body() signupReqDto: SignupReqDto) {
-    const { id } = await this.authService.signup(signupReqDto);
-    return id
+  async signup(@Body() signupReqDto: SignupReqDto): Promise<SignupResDto> {
+    const { id, accessToken, refreshToken } = await this.authService.signup(signupReqDto);
+    return { id, accessToken, refreshToken }
   }
 
   @ApiCreatedResponse({type: SigninResDto})
