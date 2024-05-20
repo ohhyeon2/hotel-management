@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SigninReqDto, SignupReqDto } from './dto/req.dto';
+import { SendEmailReqDto, SigninReqDto, SignupReqDto, VerifyCodeReqDto } from './dto/req.dto';
 import { RefreshTokenResDto, SigninResDto, SignupResDto } from './dto/res.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/common/decorator/public.decorator';
@@ -29,14 +29,14 @@ export class AuthController {
 
   @Public()
   @Post('verify-email/send')
-  async send(@Body() email: string) {
-    return this.authService.sendVerificationCode(email)
+  async send(@Body() { email }: SendEmailReqDto) {
+    this.authService.sendVerificationCode(email)
   }
 
   @Public()
   @Post('verify-email/match')
-  async verify(@Body() email: string, code: string) {
-    return this.authService.matchVerificationCode(email, code)
+  async verify(@Body() { email, code }: VerifyCodeReqDto) {
+    this.authService.matchVerificationCode(email, code)
   }
 
   @ApiCreatedResponse({type: RefreshTokenResDto})

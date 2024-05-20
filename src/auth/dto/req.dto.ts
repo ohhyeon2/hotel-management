@@ -36,3 +36,18 @@ export class SigninReqDto {
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{10,20}/)
   password: string;
 }
+
+export class SendEmailReqDto {
+  @ApiProperty({ required: true, example: 'nestjs@naver.com' })
+  @IsEmail()
+  email: string;
+}
+
+export class VerifyCodeReqDto {
+  @ApiProperty({ required: true, example: 'nestjs@naver.com' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ required: true })
+  code: string;
+}
