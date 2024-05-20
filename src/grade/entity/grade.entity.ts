@@ -16,10 +16,10 @@ export class Grade {
   id: string;
 
   @Column({ type: 'enum', enum: Grades })
-  grade: Grades = Grades.NORMAL;
+  grade: Grades;
 
   @Column({ default: 0 })
-  benefit: 0;
+  benefit: number;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
