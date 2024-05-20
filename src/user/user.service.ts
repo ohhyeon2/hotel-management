@@ -1,8 +1,7 @@
 import { SignupReqDto } from './../auth/dto/req.dto';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { User } from './entity/user.entity';
 import { GradeService } from 'src/grade/grade.service';
 import { Verification } from 'src/auth/entity/verification.entity';
@@ -28,7 +27,7 @@ export class UserService {
 
     const grade = await this.gradeService.createGrade(user);
     user.grade = grade;
-    
+
     await this.userRepository.save(user);
 
     return user;
