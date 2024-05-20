@@ -5,22 +5,29 @@ import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 import { GradeService } from 'src/grade/grade.service';
 import { Verification } from 'src/auth/entity/verification.entity';
+import { EncryptService } from 'src/common/encrypt/encrypt.service';
 // import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly gradeService: GradeService,
+    private readonly encryptService: EncryptService,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
   async create(signupReqDto: SignupReqDto, password: string, verified: Verification) {
     const { email, nickname, name, phone  } = signupReqDto;
+
+    const encryptEmail = this.encryptService.encrypt(email);
+    const encryptPhone = this.encryptService.encrypt(phone);
+    const encryptName = this.encryptService.encrypt(name);
+
     const user = this.userRepository.create({
-      email,
+      email: encryptEmail,
+      name: encryptName,
+      phone: encryptPhone,
       nickname,
-      name,
-      phone,
       password,
       verified: [ verified ]
   });
@@ -47,11 +54,16 @@ export class UserService {
   }
 
   async findOneByUserId(id: string) {
-    const { email, nickname, phone } = await this.userRepository.findOneBy({ id });
-    return { email, nickname, phone };
+    const user = await this.userRepository.findOneBy({ id });
+
+    const email = this.encryptService.decrypt(user.email)
+    const phone = this.encryptService.decrypt(user.phone)
+    const name = this.encryptService.decrypt(user.name)
+    
+    return { email, name, phone, grade: user.grade.grade};
   }
 
-  async findOneByUseCount(id: string) {
+  async findOneByUsageCount(id: string) {
     const { usageCount } = await this.userRepository.findOneBy({ id });
     return { usageCount }
   }

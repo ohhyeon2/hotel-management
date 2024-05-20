@@ -11,13 +11,14 @@ import emailConfig from './config/email.config';
 import { EmailModule } from './email/email.module';
 import { RedisModule } from './redis/redis.module';
 import { GradeModule } from './grade/grade.module';
+import encryptionConfig from './config/encryption.config';
+
 @Module({
   imports: [
-    //TODO config module 분리하기
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
-      load: [ jwtConfig, emailConfig ]
+      load: [ jwtConfig, emailConfig, encryptionConfig ]
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
