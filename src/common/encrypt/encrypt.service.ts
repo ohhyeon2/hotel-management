@@ -1,11 +1,24 @@
+import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class EncryptService {
-  private readonly algorithm = 'aes-256-cbc';
-  private readonly key = crypto.randomBytes(32);
-  private readonly iv = crypto.randomBytes(16);
+  private readonly algorithm: string;
+  private readonly key: Buffer;
+  private readonly iv: Buffer;
+
+  constructor(private configService: ConfigService) {
+    this.algorithm = this.configService.get('encryption.algorithm');
+    this.key = Buffer.from(
+      this.configService.get<string>('encryption.key'),
+      'hex',
+    );
+    this.iv = Buffer.from(
+      this.configService.get<string>('encryption.iv'),
+      'hex',
+    );
+  }
 
   encrypt(code: string): string {
     const cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
@@ -15,13 +28,10 @@ export class EncryptService {
   }
 
   decrypt(code: string): string {
-    const [encrypted, iv] = code.split(' ');
-    const decipher = crypto.createDecipheriv(
-      this.algorithm,
-      this.key,
-      Buffer.from(iv, 'hex'),
-    );
-    let decrypted = decipher.update(encrypted, 'hex', 'hex');
+    const [encrypted, ivHex] = code.split(' ');
+    const iv = Buffer.from(ivHex, 'hex');
+    const decipher = crypto.createDecipheriv(this.algorithm, this.key, iv);
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
     return decrypted;
   }
