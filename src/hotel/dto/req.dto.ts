@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, Matches, MaxLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, Matches, MaxLength } from 'class-validator';
 
 export class CreateHotelReqDto {
   @ApiProperty({ required: true, example: '그랜드 부다페스트 호텔' })
@@ -26,4 +26,36 @@ export class CreateHotelReqDto {
 
   @ApiProperty({ required: true })
   checkOut: string;
+}
+
+export class UpdateHotelReqDto {
+  @ApiProperty({ example: '업데이트 그랜드 부다페스트 호텔' })
+  @IsOptional()
+  name?: string;
+
+  @ApiProperty({ example: 'update_hotel@hotel.com' })
+  @IsOptional()
+  email?: string;
+
+  @ApiProperty({ examples: ['02-123-1234', '031-1234-1234'] })
+  @Matches(/^\d{2,3}-\d{3,4}-\d{4}$/)
+  @IsOptional()
+  telephone?: string;
+
+  @ApiProperty({ example: '호텔 소개' })
+  @MaxLength(100)
+  @IsOptional()
+  description?: string;
+
+  @ApiProperty({ example: '서울특별시 중구 동호로 249 (우 04605)' })
+  @IsOptional()
+  address?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  checkIn?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  checkOut?: string;
 }
