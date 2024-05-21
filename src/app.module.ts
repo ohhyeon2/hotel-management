@@ -11,6 +11,7 @@ import emailConfig from './config/email.config';
 import { EmailModule } from './email/email.module';
 import { RedisModule } from './redis/redis.module';
 import { GradeModule } from './grade/grade.module';
+import { HotelModule } from './hotel/hotel.module';
 import encryptionConfig from './config/encryption.config';
 
 @Module({
@@ -34,7 +35,8 @@ import encryptionConfig from './config/encryption.config';
     AuthModule,
     EmailModule,
     RedisModule,
-    GradeModule
+    GradeModule,
+    HotelModule
   ],
   controllers: [AppController],
   providers: [AppService],
