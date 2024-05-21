@@ -34,11 +34,11 @@ export class AuthService {
     const { email, password, passwordCheck } = signupReqDto;
 
     const existUser = await this.userService.findOneByUserEmail(email);
-    if (existUser) throw new BadRequestException();
-    if (password !== passwordCheck) throw new BadRequestException();
+    if (existUser) throw new BadRequestException("이미 존재하는 이메일 입니다.");
+    if (password !== passwordCheck) throw new BadRequestException("패스워드가 일치하지 않습니다.");
 
     const verifiedStatus = await this.verificationRepository.findOne({ where: { email, verified: true }})
-    if (!verifiedStatus) throw new BadRequestException();
+    if (!verifiedStatus) throw new BadRequestException("이메일을 인증해 주세요");
 
     const hashPassword = await this.generatePassword(password);
     const user = await this.userService.create(signupReqDto, hashPassword , verifiedStatus);

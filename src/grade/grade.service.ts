@@ -14,7 +14,7 @@ export class GradeService {
   ) {}
 
   async createGrade(user: User): Promise<Grade> {
-    const grade = this.gradeRepository.create({users: [user]});
+    const grade = this.gradeRepository.create({ users: [ user ] });
 
     await this.gradeRepository.save(grade);
     return grade;

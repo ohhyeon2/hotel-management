@@ -11,6 +11,10 @@ import { JwtStrategy } from './jwt/jwt.strategy';
 import { ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
+import { EncryptService } from 'src/common/encrypt/encrypt.service';
+import { RedisService } from 'src/redis/redis.service';
+import { EmailService } from 'src/email/email.service';
+import { Verification } from './entity/verification.entity';
 
 @Module({
   imports: [
@@ -27,12 +31,15 @@ import { JwtAuthGuard } from './jwt/jwt-auth.guard';
         };
       },
     }),
-    TypeOrmModule.forFeature([User, RefreshToken]),
+    TypeOrmModule.forFeature([User, RefreshToken, Verification]),
     UserModule,
     PassportModule,
   ],
   providers: [
     AuthService,
+    EncryptService,
+    RedisService,
+    EmailService,
     JwtStrategy,
     { provide: APP_GUARD, 
       useClass: JwtAuthGuard

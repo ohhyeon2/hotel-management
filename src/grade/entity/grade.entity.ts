@@ -4,7 +4,6 @@ import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  JoinColumn,
   OneToMany,
 } from 'typeorm';
 import { Grade as Grades } from '../enum/grade.enum';
