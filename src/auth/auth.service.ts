@@ -33,15 +33,20 @@ export class AuthService {
   async signup(signupReqDto: SignupReqDto) {
     const { email, password, passwordCheck } = signupReqDto;
 
-    const existUser = await this.userService.findOneByUserEmail(email);
-    if (existUser) throw new BadRequestException("이미 존재하는 이메일 입니다.");
-    if (password !== passwordCheck) throw new BadRequestException("패스워드가 일치하지 않습니다.");
+    await this.validateUserSignup(email, password, passwordCheck)
 
-    const verifiedStatus = await this.verificationRepository.findOne({ where: { email, verified: true }})
-    if (!verifiedStatus) throw new BadRequestException("이메일을 인증해 주세요");
+    const verifiedStatus = await this.verificationRepository.findOne({
+      where: { email, verified: true },
+    });
+    if (!verifiedStatus)
+      throw new BadRequestException('이메일을 인증해 주세요');
 
     const hashPassword = await this.generatePassword(password);
-    const user = await this.userService.create(signupReqDto, hashPassword , verifiedStatus);
+    const user = await this.userService.create(
+      signupReqDto,
+      hashPassword,
+      verifiedStatus,
+    );
 
     verifiedStatus.user = user;
 
@@ -57,22 +62,33 @@ export class AuthService {
     return { id: user.id, accessToken, refreshToken: refreshToken.token };
   }
 
-  async signin(email: string, password: string) {
+  private async validateUserSignup(email: string, password: string, passwordCheck: string) {
     const user = await this.userService.findOneByUserEmail(email);
-    if (!user) throw new UnauthorizedException();
+    if (user) throw new BadRequestException('이미 존재하는 이메일 입니다.');
 
-    const comparePassword = await bcrypt.compare(password, user.password);
-    if (!comparePassword) throw new UnauthorizedException();
+    if (password !== passwordCheck) throw new BadRequestException('패스워드가 일치하지 않습니다.');
+  }
 
-    const refreshToken = this.jwtService.sign(
-      { sub: user.id, tokenType: 'refresh' },
-      { expiresIn: '30d' },
-    );
+  async signin(email: string, password: string) {
+    const user = await this.validateUserSignin(email, password)
+
+    const refreshToken = this.generateRefreshToken(user.id)
+
     await this.createUserRefreshToken(user.id, refreshToken);
     return {
-      accessToken: this.jwtService.sign({ sub: user.id, tokenType: 'access' }),
+      accessToken: this.generateAccessToken(user.id),
       refreshToken,
     };
+  }
+
+  private async validateUserSignin(email: string, password: string) {
+    const user = await this.userService.findOneByUserEmail(email);
+    if (!user) throw new UnauthorizedException('이메일 또는 패스워드가 일치하지 않습니다.');
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new UnauthorizedException('이메일 또는 패스워드가 일치하지 않습니다.');
+
+    return user;
   }
 
   async refresh(token: string, userId: string) {
@@ -97,10 +113,12 @@ export class AuthService {
     await this.redisService.set(email, encryptCode);
     await this.emailService.sendVerificationCode(email, code);
 
-    let verification = await this.verificationRepository.findOne({ where: { email } })
+    let verification = await this.verificationRepository.findOne({
+      where: { email },
+    });
     if (!verification) {
-      verification = this.verificationRepository.create({ email })
-      await this.verificationRepository.save(verification)
+      verification = this.verificationRepository.create({ email });
+      await this.verificationRepository.save(verification);
     }
   }
 
@@ -108,16 +126,18 @@ export class AuthService {
     const encryptCode = await this.redisService.get(email);
     const decryptCode = this.encryptService.decrypt(encryptCode);
 
-    const verifiedStatus = this.verificationRepository.create({ email })
+    const verifiedStatus = this.verificationRepository.create({ email });
 
     if (code !== decryptCode) throw new BadRequestException();
     if (code === decryptCode) await this.redisService.del(email);
 
-    const verification = await this.verificationRepository.findOne({ where: { email } })
+    const verification = await this.verificationRepository.findOne({
+      where: { email },
+    });
     if (!verification) throw new BadRequestException();
 
     verifiedStatus.verified = true;
-    await this.verificationRepository.save(verifiedStatus)
+    await this.verificationRepository.save(verifiedStatus);
   }
 
   private generateAccessToken(userId: string) {
