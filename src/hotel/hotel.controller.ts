@@ -1,27 +1,9 @@
-import { HotelService } from './hotel.service';
-import {
-  Body,
-  Controller,
-  Delete,
-  Param,
-  Post,
-  Put,
-  Get,
-  UseInterceptors,
-  UploadedFile,
-  ParseFilePipeBuilder,
-  HttpStatus,
-} from '@nestjs/common';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import {
-  CreateHotelReqDto,
-  CreateImageReqDto,
-  DeleteHotelReqDto,
-  FindHotelReqDto,
-  UpdateHotelReqDto,
-} from './dto/req.dto';
-import { FindHotelResDto } from './dto/res.dto';
+import { Body, Controller, Delete, Param, Post, Put, Get, UseInterceptors, UploadedFile, ParseFilePipeBuilder, HttpStatus } from '@nestjs/common';
+import { CreateHotelReqDto, CreateImageReqDto, DeleteHotelReqDto, FindHotelReqDto, UpdateHotelReqDto } from './dto/req.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { HotelService } from './hotel.service';
+import { FindHotelResDto } from './dto/res.dto';
 import { Public } from 'src/common/decorator/public.decorator';
 
 @ApiTags('Hotel')
@@ -35,10 +17,7 @@ export class HotelController {
   }
 
   @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateHotelReqDto: UpdateHotelReqDto,
-  ) {
+  async update(@Param('id') id: string, @Body() updateHotelReqDto: UpdateHotelReqDto) {
     return this.hotelService.update(id, updateHotelReqDto);
   }
 
@@ -65,7 +44,7 @@ export class HotelController {
     )
     file: Express.Multer.File,
     @Body() { name }: CreateImageReqDto,
-    @Param() { id } : FindHotelReqDto,
+    @Param() { id }: FindHotelReqDto,
   ) {
     const { mimetype, path } = file;
     return this.hotelService.upload(id, name, mimetype, path);

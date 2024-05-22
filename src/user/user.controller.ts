@@ -1,9 +1,9 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 import { UserService } from 'src/user/user.service';
 import { FindUserReqDto } from './dto/req.dto';
 import { FindUserResDto } from './dto/res.dto';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 
 @ApiTags('User')
 @ApiExtraModels(FindUserReqDto)

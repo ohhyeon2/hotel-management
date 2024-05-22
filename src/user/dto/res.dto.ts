@@ -10,6 +10,6 @@ export class FindUserResDto {
   @ApiProperty({ required: true, example: '김길동' })
   name: string;
 
-  @ApiProperty({ required: true, example: 'normal'})
+  @ApiProperty({ required: true, example: 'normal' })
   grade: string;
 }

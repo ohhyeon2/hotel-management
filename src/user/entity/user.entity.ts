@@ -1,17 +1,7 @@
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { RefreshToken } from 'src/auth/entity/refresh-token.entity';
 import { Verification } from 'src/auth/entity/verification.entity';
 import { Grade } from 'src/grade/entity/grade.entity';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToOne,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
-} from 'typeorm';
 
 @Entity()
 export class User {
@@ -34,7 +24,7 @@ export class User {
   phone: string;
 
   @Column({ default: 0 })
-  usageCount: number;;
+  usageCount: number;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

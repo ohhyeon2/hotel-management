@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -33,20 +29,13 @@ export class AuthService {
   async signup(signupReqDto: SignupReqDto) {
     const { email, password, passwordCheck } = signupReqDto;
 
-    await this.validateUserSignup(email, password, passwordCheck)
+    await this.validateUserSignup(email, password, passwordCheck);
 
-    const verifiedStatus = await this.verificationRepository.findOne({
-      where: { email, verified: true },
-    });
-    if (!verifiedStatus)
-      throw new BadRequestException('이메일을 인증해 주세요');
+    const verifiedStatus = await this.verificationRepository.findOne({ where: { email, verified: true } });
+    if (!verifiedStatus) throw new BadRequestException('이메일을 인증해 주세요');
 
     const hashPassword = await this.generatePassword(password);
-    const user = await this.userService.create(
-      signupReqDto,
-      hashPassword,
-      verifiedStatus,
-    );
+    const user = await this.userService.create(signupReqDto, hashPassword, verifiedStatus);
 
     verifiedStatus.user = user;
 
@@ -70,9 +59,9 @@ export class AuthService {
   }
 
   async signin(email: string, password: string) {
-    const user = await this.validateUserSignin(email, password)
+    const user = await this.validateUserSignin(email, password);
 
-    const refreshToken = this.generateRefreshToken(user.id)
+    const refreshToken = this.generateRefreshToken(user.id);
 
     await this.createUserRefreshToken(user.id, refreshToken);
     return {
@@ -92,9 +81,7 @@ export class AuthService {
   }
 
   async refresh(token: string, userId: string) {
-    const refreshTokenEntity = await this.refreshTokenRepository.findOneBy({
-      token,
-    });
+    const refreshTokenEntity = await this.refreshTokenRepository.findOneBy({ token });
 
     if (!refreshTokenEntity) throw new BadRequestException();
 
@@ -116,6 +103,7 @@ export class AuthService {
     let verification = await this.verificationRepository.findOne({
       where: { email },
     });
+
     if (!verification) {
       verification = this.verificationRepository.create({ email });
       await this.verificationRepository.save(verification);
@@ -141,23 +129,16 @@ export class AuthService {
   }
 
   private generateAccessToken(userId: string) {
-    return this.jwtService.sign(
-      { sub: userId, tokenType: 'access' },
-      { expiresIn: '1d' },
-    );
+    return this.jwtService.sign({ sub: userId, tokenType: 'access' }, { expiresIn: '1d' });
   }
 
   private generateRefreshToken(userId: string) {
-    return this.jwtService.sign(
-      { sub: userId, tokenType: 'refresh' },
-      { expiresIn: '30d' },
-    );
+    return this.jwtService.sign({ sub: userId, tokenType: 'refresh' }, { expiresIn: '30d' });
   }
 
   private async createUserRefreshToken(userId: string, refreshToken: string) {
-    let refreshTokenEntity = await this.refreshTokenRepository.findOneBy({
-      user: { id: userId },
-    });
+    let refreshTokenEntity = await this.refreshTokenRepository.findOneBy({ user: { id: userId } });
+
     if (refreshTokenEntity) {
       refreshTokenEntity.token = refreshToken;
     } else {
@@ -174,10 +155,7 @@ export class AuthService {
   }
 
   private generateRandomCode(length: number) {
-    const randomBytes = crypto
-      .randomBytes(length)
-      .toString('base64')
-      .slice(0, length);
+    const randomBytes = crypto.randomBytes(length).toString('base64').slice(0, length);
     return randomBytes;
   }
 }

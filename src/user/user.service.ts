@@ -1,4 +1,3 @@
-import { SignupReqDto } from './../auth/dto/req.dto';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,6 +5,7 @@ import { User } from './entity/user.entity';
 import { GradeService } from 'src/grade/grade.service';
 import { Verification } from 'src/auth/entity/verification.entity';
 import { EncryptService } from 'src/common/encrypt/encrypt.service';
+import { SignupReqDto } from './../auth/dto/req.dto';
 // import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
@@ -16,11 +16,7 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(
-    signupReqDto: SignupReqDto,
-    password: string,
-    verified: Verification,
-  ) {
+  async create(signupReqDto: SignupReqDto, password: string, verified: Verification) {
     const { email, nickname, name, phone } = signupReqDto;
 
     const encryptEmail = this.encryptService.encrypt(email);
@@ -46,7 +42,7 @@ export class UserService {
 
   // @Cron('0 0 1 * *')
   async checkUserUsageAndUpgrade() {
-    Logger.log('유저 등급 조정 작업 시작')
+    Logger.log('유저 등급 조정 작업 시작');
     const users = await this.userRepository.find({ relations: ['grade'] });
 
     for (const user of users) {

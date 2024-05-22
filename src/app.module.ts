@@ -1,16 +1,16 @@
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import jwtConfig from './config/jwt.config';
 import emailConfig from './config/email.config';
+import encryptionConfig from './config/encryption.config';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { RedisModule } from './redis/redis.module';
 import { GradeModule } from './grade/grade.module';
 import { HotelModule } from './hotel/hotel.module';
-import encryptionConfig from './config/encryption.config';
 
 @Module({
   imports: [

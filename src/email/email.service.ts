@@ -17,10 +17,10 @@ export class EmailService {
         text: '회원가입 코드입니다.',
         html: `<br>회원가입 인증 코드입니다.<br>${code}</br>`,
       });
-      this.logger.log('이메일 전송 성공')
+      this.logger.log('이메일 전송 성공');
     } catch (error) {
-      this.logger.error('이메일 전송 실패', error.stack)
-      throw new InternalServerErrorException('이메일 전송 사용 불가')
+      this.logger.error('이메일 전송 실패', error.stack);
+      throw new InternalServerErrorException('이메일 전송 사용 불가');
     }
   }
 }

@@ -1,14 +1,9 @@
-import {
-  Injectable,
-  BadRequestException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Hotel } from './entity/hotel.entity';
 import { Repository } from 'typeorm';
-import { CreateHotelReqDto, UpdateHotelReqDto } from './dto/req.dto';
+import { Hotel } from './entity/hotel.entity';
 import { HotelImage } from './entity/hotel-image.entity';
+import { CreateHotelReqDto, UpdateHotelReqDto } from './dto/req.dto';
 
 @Injectable()
 export class HotelService {
@@ -51,8 +46,7 @@ export class HotelService {
       const existTelephone = await this.hotelRepository.findOneBy({
         telephone,
       });
-      if (existTelephone)
-        throw new BadRequestException('이미 존재하는 전화번호');
+      if (existTelephone) throw new BadRequestException('이미 존재하는 전화번호');
     }
 
     await this.hotelRepository.update(id, updateHotelReqDto);
@@ -67,9 +61,7 @@ export class HotelService {
 
     const result = await this.hotelRepository.delete(id);
 
-    if (result.affected === 0) {
-      throw new InternalServerErrorException('호텔 삭제 실패');
-    }
+    if (result.affected === 0) throw new InternalServerErrorException('호텔 삭제 실패');
 
     return true;
   }
@@ -89,7 +81,7 @@ export class HotelService {
     hotel.image.push(uploaded);
 
     await this.hotelImageRepository.save(uploaded);
-    await this.hotelRepository.save(hotel)
+    await this.hotelRepository.save(hotel);
   }
 
   async findAll() {

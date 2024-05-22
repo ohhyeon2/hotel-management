@@ -1,13 +1,13 @@
 import { Logger, Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entity/user.entity';
-import { JwtService } from '@nestjs/jwt';
 import { GradeService } from 'src/grade/grade.service';
 import { Grade } from 'src/grade/entity/grade.entity';
-import { ScheduleModule } from '@nestjs/schedule';
 import { EncryptService } from 'src/common/encrypt/encrypt.service';
+import { User } from './entity/user.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Grade]), ScheduleModule.forRoot()],

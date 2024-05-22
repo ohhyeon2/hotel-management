@@ -7,7 +7,7 @@ export class RedisService {
   constructor(@InjectRedis() private readonly redis: Redis) {}
 
   async set(key: string, value: string) {
-    const alreadySet = await this.get(key)
+    const alreadySet = await this.get(key);
     if (alreadySet) {
       await this.del(key);
     }

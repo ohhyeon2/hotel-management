@@ -12,11 +12,11 @@ import { ConfigService } from '@nestjs/config';
           prot: 587,
           auth: {
             user: configService.get('email.user'),
-            pass: configService.get('email.pass')
-          }
-        }
-      })
-    })
+            pass: configService.get('email.pass'),
+          },
+        },
+      }),
+    }),
   ],
   providers: [Logger],
 })

@@ -8,8 +8,8 @@ import { RedisModule as NestRedisModule } from '@nestjs-modules/ioredis';
       type: 'single',
       options: {
         host: 'localhost',
-        port: 6379
-      }
+        port: 6379,
+      },
     }),
   ],
   providers: [RedisService],
