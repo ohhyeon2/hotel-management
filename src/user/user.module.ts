@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,6 +13,6 @@ import { EncryptService } from 'src/common/encrypt/encrypt.service';
   imports: [TypeOrmModule.forFeature([User, Grade]), ScheduleModule.forRoot()],
   exports: [UserService],
   controllers: [UserController],
-  providers: [UserService, JwtService, GradeService, EncryptService],
+  providers: [UserService, JwtService, GradeService, EncryptService, Logger],
 })
 export class UserModule {}
