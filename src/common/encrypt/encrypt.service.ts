@@ -1,5 +1,11 @@
 import { ConfigService } from '@nestjs/config';
-import { Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  LoggerService,
+  NotFoundException,
+} from '@nestjs/common';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -8,16 +14,19 @@ export class EncryptService {
   private readonly key: Buffer;
   private readonly iv: Buffer;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    @Inject(Logger) private readonly logger: LoggerService,
+  ) {
     this.algorithm = this.configService.get('encryption.algorithm');
-    this.key = Buffer.from(
-      this.configService.get<string>('encryption.key'),
-      'hex',
-    );
-    this.iv = Buffer.from(
-      this.configService.get<string>('encryption.iv'),
-      'hex',
-    );
+
+    const key = this.configService.get('encryption.key');
+    const iv = this.configService.get('encryption.iv');
+
+    this.validateEncryption(this.algorithm, key, iv)
+
+    this.key = Buffer.from(key, 'hex');
+    this.iv = Buffer.from(iv, 'hex');
   }
 
   encrypt(code: string): string {
@@ -34,5 +43,23 @@ export class EncryptService {
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
     return decrypted;
+  }
+
+  private validateEncryption(algorithm: string, key: string, iv: string) {
+    if (!algorithm) {
+      const error = new NotFoundException('encryption algorithm undefined');
+      this.logger.log(error.message, error.stack)
+      throw error;
+    }
+    if (!key) {
+      const error = new NotFoundException('encryption key undefined');
+      this.logger.log(error.message, error.stack)
+      throw error;
+    }
+    if (!iv) {
+      const error = new NotFoundException('encryption iv undefined');
+      this.logger.log(error.message, error.stack)
+      throw error;
+    }
   }
 }
