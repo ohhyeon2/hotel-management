@@ -1,6 +1,9 @@
 import {
   ExecutionContext,
+  Inject,
   Injectable,
+  Logger,
+  LoggerService,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -13,6 +16,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
     private reflector: Reflector,
     private jwtService: JwtService,
+    @Inject(Logger) private readonly logger: LoggerService,
   ) {
     super();
   }
@@ -29,17 +33,22 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const http = context.switchToHttp();
     const { url, headers } = http.getRequest<Request>();
 
-    const authorization = headers['authorization']
-  
-    if (!authorization) throw new UnauthorizedException();
-    if (!authorization.includes('Bearer')) throw new UnauthorizedException();
+    const authorization = headers['authorization'];
 
+    if (!authorization || !authorization.includes('Bearer')) {
+      const error = new UnauthorizedException('인증되지 않은 사용자');
+      this.logger.log(error.message, error.stack);
+      throw error;
+    }
+    
     const token = /Bearer\s(.+)/.exec(authorization)[1];
     if (!token) throw new UnauthorizedException('액세스 토큰 필요');
 
     const decodeToken = this.jwtService.decode(token);
     if (url !== '/auth/refresh' && decodeToken['tokenType'] === 'refresh') {
-      throw new UnauthorizedException('인증되지 않은 사용자 입니다.');
+      const error = new UnauthorizedException('인증되지 않은 사용자');
+      this.logger.log(error.message, error.stack);
+      throw error;
     }
 
     return super.canActivate(context);
