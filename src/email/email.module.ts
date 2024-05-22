@@ -1,5 +1,4 @@
-import { Module } from '@nestjs/common';
-import { EmailService } from './email.service';
+import { Logger, Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 
@@ -19,6 +18,6 @@ import { ConfigService } from '@nestjs/config';
       })
     })
   ],
-  providers: [EmailService],
+  providers: [Logger],
 })
 export class EmailModule {}
