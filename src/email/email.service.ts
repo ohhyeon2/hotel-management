@@ -22,6 +22,5 @@ export class EmailService {
       this.logger.error('이메일 전송 실패', error.stack)
       throw new InternalServerErrorException('이메일 전송 사용 불가')
     }
-    
   }
 }

@@ -16,8 +16,8 @@ import encryptionConfig from './config/encryption.config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [ jwtConfig, emailConfig, encryptionConfig ],
-      envFilePath: `.env.${process.env.STAGE}`
+      load: [jwtConfig, emailConfig, encryptionConfig],
+      envFilePath: `.env.${process.env.STAGE}`,
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -38,7 +38,6 @@ import encryptionConfig from './config/encryption.config';
   ],
   providers: [Logger],
 })
-
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
