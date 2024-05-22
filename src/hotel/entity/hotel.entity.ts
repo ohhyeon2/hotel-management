@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { HotelImage } from './hotel-image.entity';
 
 @Entity()
 export class Hotel {
@@ -21,6 +22,9 @@ export class Hotel {
   address: string;
 
   @Column()
+  price: number;
+
+  @Column()
   checkIn: string;
 
   @Column()
@@ -31,4 +35,7 @@ export class Hotel {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
+
+  @OneToMany(() => HotelImage, (hotelImage) => hotelImage.hotel)
+  image: HotelImage[];
 }

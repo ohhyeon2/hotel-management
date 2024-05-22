@@ -36,7 +36,7 @@ import encryptionConfig from './config/encryption.config';
     EmailModule,
     RedisModule,
     GradeModule,
-    HotelModule
+    HotelModule,
   ],
   controllers: [AppController],
   providers: [AppService],

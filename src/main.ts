@@ -11,7 +11,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('hotel management')
     .setDescription('hotel management API')
-    .setVersion('1.0')
+    .setVersion('1.0.0')
     .addTag('management web app')
     .addBearerAuth()
     .build();
@@ -22,6 +22,7 @@ async function bootstrap() {
   }
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, customOptions);
+  
   await app.listen(3000);
 }
 bootstrap();

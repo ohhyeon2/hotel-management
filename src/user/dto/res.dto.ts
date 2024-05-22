@@ -1,15 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Grade } from 'src/grade/enum/grade.enum';
 
 export class FindUserResDto {
-  @ApiProperty({ required: true })
-  id: string;
-
-  @ApiProperty({ required: true, example: 'nestjs@naver.com' })
-  email: string;
-}
-
-export class GetUserResDto {
   @ApiProperty({ required: true, example: 'nestjs@naver.com' })
   email: string;
 

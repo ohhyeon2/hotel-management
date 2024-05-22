@@ -21,6 +21,9 @@ export class CreateHotelReqDto {
   @ApiProperty({ required: true, example: '서울특별시 중구 동호로 249 (우 04605)' })
   address: string;
 
+  @ApiProperty({ required: true, example: 100_000 })
+  price: number;
+
   @ApiProperty({ required: true })
   checkIn: string;
 
@@ -51,6 +54,10 @@ export class UpdateHotelReqDto {
   @IsOptional()
   address?: string;
 
+  @ApiProperty({ example: 100_000 })
+  @IsOptional()
+  price?: number
+
   @ApiProperty()
   @IsOptional()
   checkIn?: string;
@@ -58,4 +65,25 @@ export class UpdateHotelReqDto {
   @ApiProperty()
   @IsOptional()
   checkOut?: string;
+}
+
+export class DeleteHotelReqDto {
+  @ApiProperty({ required: true })
+  id: string;
+}
+
+export class FindHotelReqDto {
+  @ApiProperty({ required: true })
+  id: string;
+}
+
+export class CreateImageReqDto {
+  @ApiProperty({ required: true })
+  id: string;
+
+  @ApiProperty({ required: true })
+  name: string;
+
+  @ApiProperty({ required: true, format: 'binary', type: 'string'})
+  image: any;
 }
