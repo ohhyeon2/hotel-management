@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Grade } from './entity/grade.entity';
-import { Grade as Grades } from './enum/grade.enum';
+import { GradeDiscount, Grade as Grades } from './enum/grade.enum';
 import { UpdateUserGradeReqDto } from './dto/req.dto';
 import { User } from 'src/user/entity/user.entity';
 
@@ -40,5 +40,15 @@ export class GradeService {
       userGrade.grade = newGrade;
       await this.gradeRepository.save(userGrade);
     }
+  }
+
+  async benefit(id: string): Promise<number> {
+    const user = await this.gradeRepository.findOne({
+      relations: ['users'],
+      where: { users: { id } },
+    });
+
+    const benefit = GradeDiscount[user.grade];
+    return benefit;
   }
 }

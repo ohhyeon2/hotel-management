@@ -7,9 +7,6 @@ export class HotelImage {
   id: string;
 
   @Column()
-  name: string;
-
-  @Column()
   mimetype: string;
 
   @Column()

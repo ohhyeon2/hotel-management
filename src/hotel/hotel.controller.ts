@@ -5,12 +5,14 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { HotelService } from './hotel.service';
 import { FindHotelResDto } from './dto/res.dto';
 import { Public } from 'src/common/decorator/public.decorator';
+import { User, UserAfterAuth } from 'src/common/decorator/user.decorator';
 
 @ApiTags('Hotel')
 @Controller('hotel')
 export class HotelController {
   constructor(private readonly hotelService: HotelService) {}
 
+  @Public()
   @Post()
   async create(@Body() createHotelReqDto: CreateHotelReqDto) {
     return this.hotelService.create(createHotelReqDto);
@@ -26,9 +28,10 @@ export class HotelController {
     return this.hotelService.remove(id);
   }
 
+  @Public()
   @Get()
-  async findAll(): Promise<FindHotelResDto[]> {
-    return this.hotelService.findAll();
+  async findAll(@User() user: UserAfterAuth): Promise<FindHotelResDto[]> {
+    return this.hotelService.findAll(user?.id);
   }
 
   @ApiConsumes('multipart/form-data')

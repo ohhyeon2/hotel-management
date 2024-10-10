@@ -14,11 +14,8 @@ export class Grade {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'enum', enum: Grades })
+  @Column({ type: 'enum', enum: Grades, default: Grades.NORMAL })
   grade: Grades;
-
-  @Column({ default: 0 })
-  benefit: number;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

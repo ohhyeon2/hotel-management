@@ -17,34 +17,34 @@ export class AuthController {
   @Post('signup')
   async signup(@Body() signupReqDto: SignupReqDto): Promise<SignupResDto> {
     const { id, accessToken, refreshToken } = await this.authService.signup(signupReqDto);
-    return { id, accessToken, refreshToken }
+    return { id, accessToken, refreshToken };
   }
 
-  @ApiCreatedResponse({type: SigninResDto})
+  @ApiCreatedResponse({ type: SigninResDto })
   @Public()
   @Post('signin')
-  async signin(@Body() {email, password}: SigninReqDto): Promise<SigninResDto> {
-    return this.authService.signin(email, password)
+  async signin(@Body() { email, password }: SigninReqDto): Promise<SigninResDto> {
+    return this.authService.signin(email, password);
   }
 
   @Public()
   @Post('verify-email/send')
   async send(@Body() { email }: SendEmailReqDto) {
-    this.authService.sendVerificationCode(email)
+    this.authService.sendVerificationCode(email);
   }
 
   @Public()
   @Post('verify-email/match')
   async verify(@Body() { email, code }: VerifyCodeReqDto) {
-    this.authService.matchVerificationCode(email, code)
+    this.authService.matchVerificationCode(email, code);
   }
 
-  @ApiCreatedResponse({type: RefreshTokenResDto})
+  @ApiCreatedResponse({ type: RefreshTokenResDto })
   @ApiBearerAuth()
   @Post('refresh')
   async refresh(@Headers('authorization') authorization, @User() user: UserAfterAuth): Promise<RefreshTokenResDto> {
     const token = /Bearer\s(.+)/.exec(authorization)[1];
-    const { accessToken, refreshToken } = await this.authService.refresh(token, user.id)
-    return { accessToken, refreshToken }
+    const { accessToken, refreshToken } = await this.authService.refresh(token, user.id);
+    return { accessToken, refreshToken };
   }
 }

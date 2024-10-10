@@ -4,10 +4,13 @@ import { Repository } from 'typeorm';
 import { Hotel } from './entity/hotel.entity';
 import { HotelImage } from './entity/hotel-image.entity';
 import { CreateHotelReqDto, UpdateHotelReqDto } from './dto/req.dto';
+import { GradeService } from 'src/grade/grade.service';
+import { User } from 'src/user/entity/user.entity';
 
 @Injectable()
 export class HotelService {
   constructor(
+    private readonly gradeService: GradeService,
     @InjectRepository(Hotel)
     private readonly hotelRepository: Repository<Hotel>,
     @InjectRepository(HotelImage)
@@ -66,13 +69,13 @@ export class HotelService {
     return true;
   }
 
+  // TODO: 파일명 넣기
   async upload(id: string, name: string, mimetype: string, path: string) {
     const hotel = await this.hotelRepository.findOneBy({ id });
 
     if (!hotel) throw new NotFoundException('존재하지 않는 호텔');
 
     const uploaded = this.hotelImageRepository.create({
-      name,
       mimetype,
       path,
       hotel,
@@ -84,8 +87,21 @@ export class HotelService {
     await this.hotelRepository.save(hotel);
   }
 
-  async findAll() {
-    const hotels = await this.hotelRepository.find();
+  async findAll(id?: string) {
+    const hotels = await this.hotelRepository.find({
+      select: {
+        id: true,
+        name: true,
+        price: true,
+      },
+    });
+
+    if (id) {
+      const benefit = await this.gradeService.benefit(id);
+      hotels.forEach((hotel) => {
+        hotel.price = hotel.price * (1 - benefit)
+      });
+    }
     return hotels;
   }
 }
