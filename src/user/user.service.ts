@@ -1,50 +1,74 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { User } from './entity/user.entity';
-import { SignupReqDto } from './dto/req.dto';
+import { GradeService } from 'src/grade/grade.service';
+import { Verification } from 'src/auth/entity/verification.entity';
+import { EncryptService } from 'src/common/encrypt/encrypt.service';
+import { SignupReqDto } from './../auth/dto/req.dto';
+// import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class UserService {
   constructor(
+    private readonly gradeService: GradeService,
+    private readonly encryptService: EncryptService,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async createUser(signupReqDto: SignupReqDto) {
-    const { name, email, password, passwordCheck, nickname, phone } = signupReqDto;
-    
-    await this.validateCreateUser(email, password, passwordCheck)
+  async create(signupReqDto: SignupReqDto, password: string, verified: Verification) {
+    const { email, nickname, name, phone } = signupReqDto;
 
-    const hashPassword = await this.generatePassword(password);
+    const encryptEmail = this.encryptService.encrypt(email);
+    const encryptPhone = this.encryptService.encrypt(phone);
+    const encryptName = this.encryptService.encrypt(name);
+
     const user = this.userRepository.create({
-      name,
+      email: encryptEmail,
+      name: encryptName,
+      phone: encryptPhone,
       nickname,
-      email,
-      phone,
-      password: hashPassword,
+      password,
+      verified: [verified],
     });
+
+    const grade = await this.gradeService.createGrade(user);
+    user.grade = grade;
+
     await this.userRepository.save(user);
+
     return user;
   }
 
+  // @Cron('0 0 1 * *')
+  async checkUserUsageAndUpgrade() {
+    Logger.log('유저 등급 조정 작업 시작');
+    const users = await this.userRepository.find({ relations: ['grade'] });
+
+    for (const user of users) {
+      const id = user.id;
+      const usageCount = user.usageCount;
+      await this.gradeService.updateGrade({ id, usageCount });
+    }
+  }
+
   async findOneByUserId(id: string) {
-    const { email, nickname, phone } = await this.userRepository.findOneBy({ id });
-    return { email, nickname, phone };
+    const user = await this.userRepository.findOne({ where: { id }, relations: ['grade'] });
+
+    const email = this.encryptService.decrypt(user.email);
+    const phone = this.encryptService.decrypt(user.phone);
+    const name = this.encryptService.decrypt(user.name);
+
+    return { email, name, phone, grade: user.grade.grade };
+  }
+
+  async findOneByUsageCount(id: string) {
+    const { usageCount } = await this.userRepository.findOneBy({ id });
+    return { usageCount };
   }
 
   async findOneByUserEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
     return user;
-  }
-
-  private async validateCreateUser(email: string, password: string, passwordCheck: string) {
-    const existUser = await this.userRepository.findOneBy({ email })
-    if (existUser) throw new BadRequestException("이미 존재하는 email입니다.");
-    if (password != passwordCheck) throw new BadRequestException("패스워드가 일치하지 않습니다.");
-  }
-
-  private async generatePassword(password: string) {
-    return bcrypt.hash(password, 10);
   }
 }
